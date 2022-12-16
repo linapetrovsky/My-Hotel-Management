@@ -13,6 +13,7 @@ class hotel
     char name[30];
     char address[50];
     char phone[10];
+    int breakfast;
 
 public:
     void main_menu();       //to display the main menu
@@ -90,6 +91,8 @@ void hotel::add()
         cin >> address;
         cout << " Phone No: ";
         cin >> phone;
+        cout << "Eats breakfast (yes : press 1 / no : press 0) : ";
+        cin >> breakfast;
         fout.write((char*)this, sizeof(hotel));
         cout << "\n Room is booked...!!!";
     }
@@ -119,6 +122,10 @@ void hotel::display()
             cout << "\n Name: " << name;
             cout << "\n Address: " << address;
             cout << "\n Phone no: " << phone;
+            if (breakfast)
+                cout << "\nEats breakfast at hotel";
+            else
+                cout << "\nNo breakfast at hotel";
             flag = 1;
             break;
         }
@@ -139,13 +146,17 @@ void hotel::rooms()
     ifstream fin("Record", ios::in);
     cout << "\n\t\t\t    List Of Rooms Allotted";
     cout << "\n\t\t\t    -------";
-    cout << "\n\n Room No.\tName\t\tAddress\t\t\t\tPhone No.";
+    cout << "\n\n Room No.\tName\t\tAddress\t\tPhone No.\t\tBreakfast";
 
     while (!fin.eof())
     {
         fin.read((char*)this, sizeof(hotel));
         cout << "\n\n " << room_no << "\t\t" << name;
         cout << "\t\t" << address << "\t\t" << phone;
+        if (breakfast)
+            cout << "\t\t\tEats breakfast";
+        else
+            cout << " \t\t\tNo breakfast";
     }
     cout << "\n\n\n\t\t\tPress any key to continue...!!";
     getch();
@@ -215,7 +226,8 @@ void hotel::modify(int r)
             cin >> address;
             cout << " Phone no: ";
             cin >> phone;
-
+            cout << "Eats breakfast (yes : press 1 / no : press 0) : ";
+            cin >> breakfast;
             file.seekg(pos);
             file.write((char*)this, sizeof(hotel));
             cout << "\n Record is modified..!!";
@@ -323,7 +335,7 @@ void main()
 
     //clrscr();
 
-    h.secure_login();
+    //h.secure_login();
     h.main_menu();
     getch();
 }

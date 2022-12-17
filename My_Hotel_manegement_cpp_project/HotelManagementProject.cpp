@@ -6,6 +6,8 @@
 #include<stdio.h>
 #include<string.h>
 using namespace std;
+#define R 5
+#define C 40
 
 class hotel
 {
@@ -14,6 +16,8 @@ class hotel
     char address[50];
     char phone[10];
     int breakfast;
+    static int count;
+
 
 public:
     void main_menu();       //to display the main menu
@@ -25,12 +29,17 @@ public:
     void modify(int);       //to modify the record
     void delete_rec(int);   //to delete the record
     void secure_login();    //main display with password
+    void feedbacks(int**, char**);
+    void addfeedback(int**, char**); //to add feedback
+    void printfeedbacks(int**, char**);  // to dispay feedbacks
 };
+
+int hotel::count = 0;
 
 void hotel::main_menu()
 {
     int choice = 0;
-    while (choice != 5)
+    while (choice != 6)
     {
 
         //  clrscr();
@@ -41,7 +50,8 @@ void hotel::main_menu()
         cout << "\n\t\t\t2.Customer Record";
         cout << "\n\t\t\t3.Rooms Allotted";
         cout << "\n\t\t\t4.Edit Record";
-        cout << "\n\t\t\t5.Exit";
+        cout << "\n\t\t\t5.feedback";
+        cout << "\n\t\t\t6.Exit";
         cout << "\n\n\t\t\t Enter Your Choice: ";
         cin >> choice;
 
@@ -55,7 +65,12 @@ void hotel::main_menu()
             break;
         case 4: edit();
             break;
-        case 5: break;
+        case 5:
+        {
+            feedbacks(rates, names);
+            break;
+        }
+        case 6: break;
         default:
         {
             cout << "\n\n\t\t\tWrong choice...!!!";
@@ -66,6 +81,87 @@ void hotel::main_menu()
     }
 }
 
+void hotel::feedbacks(int** rates, char** names)
+{
+
+    int choice;
+    cout << "\n -------";
+    cout << "\n\n 1.Add a feedback";
+    cout << "\n 2.Display all previous feedbacks";
+
+    cout << "\n Enter your choice: ";
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1: addfeedback(rates, names);
+        break;
+    case 2: printfeedbacks(rates, names);
+        break;
+    default:
+    {
+        cout << "\n Wrong Choice..!!";
+        cout << "\n Press any key to continue...!!!";
+
+    }
+    }
+}
+
+void hotel::addfeedback(int** rates, char** names)
+{
+    int rate;
+    char name[20];
+    int number;
+    cout << "\n --------";
+    cout << "\nenter your name: ";
+    cin >> name;
+    names[count] = new char[strlen(name) + 1];
+    strcpy(names[count], name);
+    cout << "\n --------";
+    cout << "Rate on a scale of 1-5";
+    cout << "\ncleanliness: ";
+    cin >> rate;
+    rates[count][0] = rate;
+    cout << "\nhotel employees: ";
+    cin >> rate;
+    rates[count][1] = rate;
+    cout << "\ncheck-in waiting time: ";
+    cin >> rate;
+    rates[count][2] = rate;
+    cout << "\nmeals: ";
+    cin >> rate;
+    rates[count][3] = rate;
+    cout << "\nrecommend the hotel to others: ";
+    cin >> rate;
+    rates[count][4] = rate;
+
+    count++;
+    cout << "\nThank you for your time!\n";
+
+}
+
+void hotel::printfeedbacks(int** rates, char** names)
+{
+
+    for (int i = 0; i < count; i++)
+    {
+        cout << "name: " << names[i] << endl;
+
+        cout << "cleanliness: " << rates[i][0] << "\t";
+        cout << "hotel employees: " << rates[i][1] << "\t";
+        cout << "check-in waiting time: " << rates[i][2] << "\t";
+        cout << "meals: " << rates[i][3] << "\t";
+        cout << "recommend the hotel to others: " << rates[i][4] << "\n";
+
+
+    }
+
+    if (!count)
+    {
+        cout << "No feedback was received in the system\n";
+    }
+
+}
 
 void hotel::add()
 {

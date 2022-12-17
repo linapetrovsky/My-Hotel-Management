@@ -38,6 +38,13 @@ int hotel::count = 0;
 
 void hotel::main_menu()
 {
+    int** rates = new int* [C];
+    for (int i = 0; i < C; i++)
+    {
+        rates[i] = new int[R];
+    }
+    char** names = new char* [C];
+
     int choice = 0;
     while (choice != 6)
     {

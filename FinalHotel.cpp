@@ -143,6 +143,7 @@ bool hotel::room_design(int age)
         if (color<Red || color> Pink)
         {
             cout << " Sorry, you selected a non-existent color " << endl;
+            return false;
         }
         break;
     }
@@ -154,8 +155,9 @@ bool hotel::room_design(int age)
         if (guests > 30)
         {
             cout << " Sorry, room can contain up to 30 guests only " << endl;
+            return false;
         }
-        return false;
+        
         break;
     }
     case 3:
@@ -165,6 +167,13 @@ bool hotel::room_design(int age)
         cout << "Press [1] for Bachelor party design  " << endl <<
             "Press [2] for Bachelorette party design" << endl;
         cin >> sex;
+        cout << "Enter number of guests " << endl;
+        cin >> guests;
+        if (guests > 30)
+        {
+            cout << " Sorry, room can contain up to 30 guests only " << endl;
+            return false;
+        }
         if (sex == Bachelor)
         {
             cout << "Enter number of guests (male only) " << endl;
@@ -184,10 +193,16 @@ bool hotel::room_design(int age)
 
         int petals;
         cout << " Choose rose petals color " << endl;
+        cout << "1. Red" << endl;
+        cout << "2. Blue" << endl;
+        cout << "3. Purple " << endl;
+        cout << "4. Turquoise " << endl;
+        cout << "5. Pink " << endl;
         cin >> petals;
         if (petals != Red)
         {
             cout << "Sorry, we have only red rose petals" << endl;
+            return false;
         }
         break;
     }

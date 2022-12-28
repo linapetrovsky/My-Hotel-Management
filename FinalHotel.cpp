@@ -57,7 +57,7 @@ void hotel::main_menu()
     char** names = new char* [C];
 
     int choice = 0;
-    while (choice != 7)
+    while (choice != 8)
     {
 
         //  clrscr();

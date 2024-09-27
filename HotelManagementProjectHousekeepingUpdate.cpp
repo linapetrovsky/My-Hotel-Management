@@ -16,6 +16,7 @@ class hotel
     char address[50];
     char phone[10];
     int breakfast;
+    static int clean;
     static int count;
 
 
@@ -32,9 +33,11 @@ public:
     void feedbacks(int**, char**);
     void addfeedback(int**, char**); //to add feedback
     void printfeedbacks(int**, char**);  // to dispay feedbacks
+    void housekeeping();     // to check if a room is clean or to ask for cleaning
 };
 
 int hotel::count = 0;
+int hotel::clean = 1;
 
 void hotel::main_menu()
 {
@@ -46,7 +49,7 @@ void hotel::main_menu()
     char** names = new char* [C];
 
     int choice = 0;
-    while (choice != 6)
+    while (choice != 7)
     {
 
         //  clrscr();
@@ -57,8 +60,9 @@ void hotel::main_menu()
         cout << "\n\t\t\t2.Customer Record";
         cout << "\n\t\t\t3.Rooms Allotted";
         cout << "\n\t\t\t4.Edit Record";
-        cout << "\n\t\t\t5.feedback";
-        cout << "\n\t\t\t6.Exit";
+        cout << "\n\t\t\t5.Feedback";
+        cout << "\n\t\t\t6.Housekeeping";
+        cout << "\n\t\t\t7.Exit";
         cout << "\n\n\t\t\t Enter Your Choice: ";
         cin >> choice;
 
@@ -77,7 +81,9 @@ void hotel::main_menu()
             feedbacks(rates, names);
             break;
         }
-        case 6: break;
+        case 6: housekeeping();
+            break;
+        case 7: break;
         default:
         {
             cout << "\n\n\t\t\tWrong choice...!!!";
@@ -194,8 +200,9 @@ void hotel::add()
         cin >> address;
         cout << " Phone No: ";
         cin >> phone;
-        cout << "Eats breakfast (yes : press 1 / no : press 0) : ";
+        cout << " Eats breakfast (yes : press 1 / no : press 0) : ";
         cin >> breakfast;
+        //clean = 1;
         fout.write((char*)this, sizeof(hotel));
         cout << "\n Room is booked...!!!";
     }
@@ -209,7 +216,7 @@ void hotel::display()
 {
     //clrscr();
     ifstream fin("Record", ios::in);
-    int r, flag;
+    int r, flag=0;
     cout << "\n Enter room no: ";
     cin >> r;
 
@@ -225,16 +232,20 @@ void hotel::display()
             cout << "\n Name: " << name;
             cout << "\n Address: " << address;
             cout << "\n Phone no: " << phone;
-            if (breakfast)
-                cout << "\nEats breakfast at hotel";
+            if (clean==1)
+                cout << "\n Housekeeping : The room is clean.";
             else
-                cout << "\nNo breakfast at hotel";
+                cout << "\n Housekeeping : Not clean.";
+            if (breakfast)
+                cout << "\n Eats breakfast at hotel";
+            else
+                cout << "\n No breakfast at hotel";
             flag = 1;
             break;
         }
     }
 
-    if (flag == 0)
+    if (!flag)
         cout << "\n Sorry Room no. not found or vacant..!!";
 
     cout << "\n\n Press any key to continue..!!";
@@ -329,8 +340,9 @@ void hotel::modify(int r)
             cin >> address;
             cout << " Phone no: ";
             cin >> phone;
-            cout << "Eats breakfast (yes : press 1 / no : press 0) : ";
+            cout << " Eats breakfast (yes : press 1 / no : press 0) : ";
             cin >> breakfast;
+            clean = 0;
             file.seekg(pos);
             file.write((char*)this, sizeof(hotel));
             cout << "\n Record is modified..!!";
@@ -428,6 +440,52 @@ start:                 //label defined
         getch();
         if (chance <= 3) goto start;
     }
+}
+
+void hotel::housekeeping()
+{
+    ifstream fin("Record", ios::in);
+    int r, flag = 0, choice;
+    cout << "\n Please enter a room number: ";
+    cin >> r;
+    while (!fin.eof())
+    {
+        fin.read((char*)this, sizeof(hotel));
+        if (room_no == r)
+        {
+            if (clean)
+            {
+                cout << "\n The room is already clean.";
+                flag = 1;
+                break;
+            }
+            else
+                  cout << "\n The room is not clean. Do you want to send housekeeper ? ( Yes(1) / No(0) ):  ";
+                  cin >> choice;
+                  if (choice == 1)
+                  {
+                      cout << "\n We've sent the housekeeper to clean your room.";
+                      clean++;
+                      flag = 1;
+                      break;
+                  }
+                  if (choice == 0)
+                  {
+                      
+                      flag = 1;
+                      break;
+                  }
+                
+        }
+    }
+    if (flag == 0)
+    {
+        cout << "\n The room doesn't exist.";
+    }
+    cout << "\n\n Press any key to continue..!!";
+    getch();
+    fin.close();
+    
 }
 
 void main()

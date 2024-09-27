@@ -8,6 +8,8 @@
 using namespace std;
 #define R 5
 #define C 40
+enum { Red = 1, Blue, Purple, Turquoise, Pink };
+enum { Bachelor = 1, Bachelorette };
 
 class hotel
 {
@@ -16,6 +18,9 @@ class hotel
     char address[50];
     char phone[10];
     int breakfast;
+    int num_of_person_restaurant;
+    static int num_of_possible_reservation;
+    static int clean;
     static int count;
 
 
@@ -29,12 +34,18 @@ public:
     void modify(int);       //to modify the record
     void delete_rec(int);   //to delete the record
     void secure_login();    //main display with password
-    void feedbacks(int**, char**);
+    void feedbacks(int**, char**); // to leave a feedback
     void addfeedback(int**, char**); //to add feedback
     void printfeedbacks(int**, char**);  // to dispay feedbacks
+    void housekeeping();     // to check if a room is clean or to ask for cleaning
+    bool room_design(int, int); //to choose room design
+    void restaurant();      //to see number of table
 };
 
+
 int hotel::count = 0;
+int hotel::clean = 1;
+int hotel::num_of_possible_reservation = 150;
 
 void hotel::main_menu()
 {
@@ -46,7 +57,7 @@ void hotel::main_menu()
     char** names = new char* [C];
 
     int choice = 0;
-    while (choice != 6)
+    while (choice != 7)
     {
 
         //  clrscr();
@@ -57,8 +68,10 @@ void hotel::main_menu()
         cout << "\n\t\t\t2.Customer Record";
         cout << "\n\t\t\t3.Rooms Allotted";
         cout << "\n\t\t\t4.Edit Record";
-        cout << "\n\t\t\t5.feedback";
-        cout << "\n\t\t\t6.Exit";
+        cout << "\n\t\t\t5.Feedback";
+        cout << "\n\t\t\t6.Housekeeping";
+        cout << "\n\t\t\t7.Restaurant";
+        cout << "\n\t\t\t8.Exit";
         cout << "\n\n\t\t\t Enter Your Choice: ";
         cin >> choice;
 
@@ -77,7 +90,13 @@ void hotel::main_menu()
             feedbacks(rates, names);
             break;
         }
-        case 6: break;
+        case 6: housekeeping();
+            break;
+
+        case 7: restaurant();
+            break;
+
+        case 8: break;
         default:
         {
             cout << "\n\n\t\t\tWrong choice...!!!";
@@ -86,6 +105,102 @@ void hotel::main_menu()
         }
         }
     }
+}
+
+bool hotel::room_design(int choice, int age)
+{
+    if (choice != 1)
+    {
+        return false;
+    }
+    cout << "\n Choose desired design: " << phone;
+    cout << "1. Birthday party design" << endl;
+    cout << "2. Surprise party design" << endl;
+    cout << "3. Bachelor/Bachelorette party design " << endl;
+    cout << "4. Honeymoon design " << endl;
+    int design;
+    cin >> design;
+    if (design < 1 || design>4)
+    {
+        return false;
+    }
+    if (design == 3 || design == 4 && age < 18)
+    {
+        return false;
+        //Can not choose these designs if under 18
+
+    }
+
+    switch (design)
+    {
+    case 1:
+    {
+        int color;
+        cout << "Choose age baloons color " << endl;
+        cout << "1. Red" << endl;
+        cout << "2. Blue" << endl;
+        cout << "3. Purple " << endl;
+        cout << "4. Turquoise " << endl;
+        cout << "5. Pink " << endl;
+        cin >> color;
+        if (color<Red || color> Pink)
+        {
+            cout << " Sorry, you selected a non-existent color " << endl;
+        }
+        break;
+    }
+    case 2:
+    {
+        unsigned int guests;
+        cout << "Enter number of guests " << endl;
+        cin >> guests;
+        if (guests > 30)
+        {
+            cout << " Sorry, room can contain up to 30 guests only " << endl;
+        }
+        return false;
+        break;
+    }
+    case 3:
+    {
+        int sex;
+        unsigned int guests;
+        cout << "Press [1] for Bachelor party design  " << endl <<
+            "Press [2] for Bachelorette party design" << endl;
+        cin >> sex;
+        if (sex == Bachelor)
+        {
+            cout << "Enter number of guests (male only) " << endl;
+            cin >> guests;
+            cout << "We will prepare " << guests * 5 << " beers for you" << endl;
+        }
+        if (sex == Bachelorette)
+        {
+            cout << "Enter number of guests (female only) " << endl;
+            cin >> guests;
+            cout << "We will prepare " << guests * 3 << " coctails for you" << endl;
+        }
+        break;
+    }
+    case 4:
+    {
+
+        int petals;
+        cout << " Choose rose petals color " << endl;
+        cin >> petals;
+        if (petals != Red)
+        {
+            cout << "Sorry, we have only red rose petals" << endl;
+        }
+        break;
+    }
+    default:
+        cout << "Wrong input" << endl;
+        return false;
+        break;
+    }
+
+    return true;
 }
 
 void hotel::feedbacks(int** rates, char** names)
@@ -120,7 +235,7 @@ void hotel::addfeedback(int** rates, char** names)
     char name[20];
     int number;
     cout << "\n --------";
-    cout << "\nenter your name: ";
+    cout << "\nEnter your name: ";
     cin >> name;
     names[count] = new char[strlen(name) + 1];
     strcpy(names[count], name);
@@ -187,6 +302,7 @@ void hotel::add()
 
     else
     {
+        int design, age,num_choice,num,num_choice_design;
         room_no = r;
         cout << " Name: ";
         cin >> name;
@@ -194,8 +310,44 @@ void hotel::add()
         cin >> address;
         cout << " Phone No: ";
         cin >> phone;
-        cout << "Eats breakfast (yes : press 1 / no : press 0) : ";
+        cout << " Eats breakfast (yes : press 1 / no : press 0) : ";
         cin >> breakfast;
+        cout << " Guest age : ";
+        cin >> age;
+        cout << " Does " << name << " need some special design of the room?" << endl <<
+            "[1]-yes" << endl << "[Any other key]-no" << endl;
+        cin >> design;
+        if (room_design(design, age))
+        {
+            cout << "The request for special design was successfully processed " << endl <<
+                "Price of the servise is 50$" << endl;
+        }
+        else
+        {
+            cout << "An error occurred " << endl <<
+                "The request to design the room was rejected" << endl;
+        }
+
+        cout << "reservation for the restaurant (yes : press 1 / no : press 0) ";
+        cin >> num_choice;
+        if (num_choice == 0)
+            num_of_person_restaurant = 0;
+        else if (num_choice == 1)
+        {
+            cout << "How much people for reservation ";
+            cin >> num;
+            if (num < num_of_possible_reservation)
+            {
+                num_of_person_restaurant = num;
+                num_of_possible_reservation = num_of_possible_reservation - num;
+            }
+            else
+            {
+                cout << "too much people,no place\n";
+                num_of_person_restaurant = 0;
+            }
+        }
+        //clean = 1;
         fout.write((char*)this, sizeof(hotel));
         cout << "\n Room is booked...!!!";
     }
@@ -209,7 +361,7 @@ void hotel::display()
 {
     //clrscr();
     ifstream fin("Record", ios::in);
-    int r, flag;
+    int r, flag = 0;
     cout << "\n Enter room no: ";
     cin >> r;
 
@@ -225,16 +377,21 @@ void hotel::display()
             cout << "\n Name: " << name;
             cout << "\n Address: " << address;
             cout << "\n Phone no: " << phone;
-            if (breakfast)
-                cout << "\nEats breakfast at hotel";
+            cout << "\n Number of people for restaurant:  " << num_of_person_restaurant;
+            if (clean == 1)
+                cout << "\n Housekeeping : The room is clean.";
             else
-                cout << "\nNo breakfast at hotel";
+                cout << "\n Housekeeping : Not clean.";
+            if (breakfast)
+                cout << "\n Eats breakfast at hotel";
+            else
+                cout << "\n No breakfast at hotel";
             flag = 1;
             break;
         }
     }
 
-    if (flag == 0)
+    if (!flag)
         cout << "\n Sorry Room no. not found or vacant..!!";
 
     cout << "\n\n Press any key to continue..!!";
@@ -329,8 +486,13 @@ void hotel::modify(int r)
             cin >> address;
             cout << " Phone no: ";
             cin >> phone;
-            cout << "Eats breakfast (yes : press 1 / no : press 0) : ";
+            cout << " Eats breakfast (yes : press 1 / no : press 0) : ";
             cin >> breakfast;
+            clean = 0;
+            cout << "Modify your reservation in restaurant. How many people are you?";
+            num_of_possible_reservation = num_of_possible_reservation + num_of_person_restaurant;
+            cin >> num_of_person_restaurant;
+            num_of_possible_reservation = num_of_possible_reservation - num_of_person_restaurant;
             file.seekg(pos);
             file.write((char*)this, sizeof(hotel));
             cout << "\n Record is modified..!!";
@@ -357,7 +519,8 @@ void hotel::delete_rec(int r)
         {
             cout << "\n Name: " << name;
             cout << "\n Address: " << address;
-            cout << "\n Pone No: " << phone;
+            cout << "\n Phone No: " << phone;
+            cout << "\n Table in restaurant" << num_of_person_restaurant;
             cout << "\n\n Do you want to delete this record(y/n): ";
             cin >> ch;
 
@@ -428,6 +591,66 @@ start:                 //label defined
         getch();
         if (chance <= 3) goto start;
     }
+}
+
+void hotel::housekeeping()
+{
+    ifstream fin("Record", ios::in);
+    int r, flag = 0, choice;
+    cout << "\n Please enter a room number: ";
+    cin >> r;
+    while (!fin.eof())
+    {
+        fin.read((char*)this, sizeof(hotel));
+        if (room_no == r)
+        {
+            if (clean)
+            {
+                cout << "\n The room is already clean.";
+                flag = 1;
+                break;
+            }
+            else
+                cout << "\n The room is not clean. Do you want to send housekeeper ? ( Yes(1) / No(0) ):  ";
+            cin >> choice;
+            if (choice == 1)
+            {
+                cout << "\n We've sent the housekeeper to clean your room.";
+                clean++;
+                flag = 1;
+                break;
+            }
+            if (choice == 0)
+            {
+
+                flag = 1;
+                break;
+            }
+
+        }
+    }
+    if (flag == 0)
+    {
+        cout << "\n The room doesn't exist.";
+    }
+    cout << "\n\n Press any key to continue..!!";
+    getch();
+    fin.close();
+
+}
+
+void hotel::restaurant()
+{
+    cout << "\n number of possible reservation : " << num_of_possible_reservation;
+    if (num_of_possible_reservation == 0)
+    {
+        cout << "\nUnfortunately ,we dont have place,sorry.\n ";
+    }
+
+    cout << "\n\n Press any key to continue..!!";
+    getch();
+    
+
 }
 
 void main()
